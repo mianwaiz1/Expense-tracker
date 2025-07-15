@@ -13,13 +13,10 @@ def main():
         print("2. Edit Expense")
         print("3. Delete Expense")
         print("4. Import Expenses from CSV")
-        print("5. Add Category")
-        print("6. Update Budget")
-        print("7. Generate Report")
-        print("8. Visualize Category Spending (Pie Chart)")
-        print("9. Visualize Monthly Trends & Budget (Bar Charts)")
-        print("10. Exit")
-
+        print("5. Generate Report")
+        print("6. Visualize Category Spending (Pie Chart)")
+        print("7. Visualize Monthly Trends & Budget (Bar Charts)")
+        print("8. Exit")
 
         choice = input("Enter your choice: ")
         try:
@@ -33,7 +30,7 @@ def main():
             elif choice == '2':
                 print(expense_manager.df)
                 index = int(input("Enter index to edit: "))
-                field = input("Field to edit (Amount/Category/Description/Date): ")
+                field = input("Field to edit / type word as it is...(Amount/Category/Description/Date): ")
                 value = input(f"New value for {field}: ")
                 expense_manager.edit_expense(index, **{field: value})
 
@@ -47,25 +44,15 @@ def main():
                 expense_manager.import_expenses(path)
 
             elif choice == '5':
-                name = input("Category name: ")
-                budget = float(input("Budget amount: "))
-                category_manager.add_category(name, budget)
-
-            elif choice == '6':
-                name = input("Category name to update: ")
-                budget = float(input("New budget amount: "))
-                category_manager.update_budget(name, budget)
-
-            elif choice == '7':
                 generate_reports(expense_manager.df, category_manager.df)
 
-            elif choice == '8':
+            elif choice == '6':
                 visualize_data(expense_manager.df, category_manager.df, mode='category')
 
-            elif choice == '9':
+            elif choice == '7':
                 visualize_data(expense_manager.df, category_manager.df, mode='monthly')
 
-            elif choice == '10':
+            elif choice == '8':
                 print("👋 Exiting...")
                 break
 
