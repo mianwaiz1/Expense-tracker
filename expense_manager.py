@@ -4,18 +4,16 @@ import os
 class ExpenseManager:
     def __init__(self, filename='expenses.csv'):
         self.filename = filename
-        self.df = pd.DataFrame({
-            'Amount': pd.Series(dtype='float'),
-            'Category': pd.Series(dtype='str'),
-            'Description': pd.Series(dtype='str'),
-            'Date': pd.Series(dtype='datetime64[ns]')
-        })
+        self.df = pd.DataFrame(columns=['Amount', 'Category', 'Description', 'Date'])
         self.load()
 
     def load(self):
         try:
             if os.path.exists(self.filename):
                 self.df = pd.read_csv(self.filename)
+                # Keep only the expected columns
+                expected_cols = ['Amount', 'Category', 'Description', 'Date']
+                self.df = self.df[[col for col in expected_cols if col in self.df.columns]]
                 self.df['Date'] = pd.to_datetime(self.df['Date'], errors='coerce')
                 self.df.dropna(subset=['Date'], inplace=True)
         except Exception as e:
@@ -67,7 +65,11 @@ class ExpenseManager:
 
     def delete_expense(self, index):
         try:
+            if index not in self.df.index:
+                print("❌ Invalid index.")
+                return
             self.df.drop(index, inplace=True)
+            self.df.reset_index(drop=True, inplace=True)
             self.save()
             print("✅ Expense deleted.")
         except Exception as e:
@@ -76,6 +78,8 @@ class ExpenseManager:
     def import_expenses(self, filepath):
         try:
             new_data = pd.read_csv(filepath)
+            expected_cols = ['Amount', 'Category', 'Description', 'Date']
+            new_data = new_data[[col for col in expected_cols if col in new_data.columns]]
             new_data['Date'] = pd.to_datetime(new_data['Date'], errors='coerce')
             new_data.dropna(subset=['Date'], inplace=True)
             self.df = pd.concat([self.df, new_data], ignore_index=True)
